@@ -10,20 +10,103 @@ import java.util.Random;
 public class Sort {
     public static void main(String[] args) {
 
-        bubbleSort(createArray());
-        System.out.println("================");
-        insertSort(createArray());
+        System.out.println("========bubbleSort========");
+        bubbleSort(createArray(10));
+        System.out.println("====insertSort=====");
+        insertSort(createArray(10));
+        System.out.println("=====selectSort=====");
+        selectSort(createArray(10));
+        System.out.println("======mergeSort=====");
+        mergeSort(createArray(10));
     }
 
-    public static Integer[] createArray() {
-        List<Integer> list = new ArrayList<>();
-        Random random = new Random();
-        for (int i = 0; i < 10; i++) {
-            list.add(random.nextInt(100));
-        }
-        Integer[] integers = list.toArray(new Integer[]{});
-        return integers;
+    /**
+     * 归并排序
+     * O(n*log^n)
+     *
+     * @param array
+     * @return
+     */
+    public static Integer[] mergeSort(Integer[] array) {
+        Integer[] result = new Integer[array.length];
+        return mergeSortRecursive(array, result, 0, array.length - 1);
     }
+
+    private static Integer[] mergeSortRecursive(Integer[] array, Integer[] result, int start, int end) {
+        //不可再分
+        if (start >= end) {
+            return array;
+        }
+        int len = end - start;
+        //找中间分隔位置
+        int mid = len / 2 + start;
+        //左边开始位置
+        int leftStart = start;
+        //左边结束位置
+        int leftEnd = mid;
+        //右边开始位置
+        int rightStart = mid + 1;
+        //右边结束位置
+        int rightEnd = end;
+        //左边数组排序
+        mergeSortRecursive(array, result, leftStart, leftEnd);
+        //右边数组排序
+        mergeSortRecursive(array, result, rightStart, rightEnd);
+        //合并两个数组
+        int k = start;
+        //左右两个数组合并
+        while (leftStart <= leftEnd && rightStart <= rightEnd) {
+            //左右数组同一个位置大小对比
+            //取小填充至 临时数组
+            result[k++] = array[leftStart] < array[rightStart] ? array[leftStart++] : array[rightStart++];
+        }
+        //当左边数组比右边多时,继续移动剩余数据至临时数组
+        while (leftStart <= leftEnd) {
+            result[k++] = array[leftStart++];
+        }
+        //当右边数组比左边多时,继续移动剩余数据至临时数组
+        while (rightStart <= rightEnd) {
+            result[k++] = array[rightStart++];
+        }
+        //复制数据
+        for (k = start; k <= end; k++) {
+            array[k] = result[k];
+        }
+        prettyPrint(array, 0);
+        return array;
+    }
+
+    /**
+     * 选择排序
+     * O(n^2)
+     *
+     * @param array
+     * @return
+     */
+    public static Integer[] selectSort(Integer[] array) {
+        int len = array.length;
+        if (len <= 1) {
+            return array;
+        }
+        //在未排序的数组中找到最小的数,并放置在已排序数组末尾
+        for (int i = 0; i < len; i++) {
+            //这里假设i就是已排序数组末尾(i=0时也符合此假设)
+            int minCursor = i;
+            for (int j = i + 1; j < len; j++) {
+                if (array[j] < array[minCursor]) {
+                    minCursor = j;
+                }
+            }
+            if (minCursor != 0) {
+                int temp = array[i];
+                array[i] = array[minCursor];
+                array[minCursor] = temp;
+            }
+            prettyPrint(array, i + 1);
+        }
+        return array;
+    }
+
 
     /**
      * 插入排序
@@ -48,8 +131,8 @@ public class Sort {
                 }
             }
             //最终j+1就是插入的位置了
-            array[j+1] = val;
-            print(array,i-1);
+            array[j + 1] = val;
+            prettyPrint(array, i - 1);
         }
         return array;
     }
@@ -78,18 +161,46 @@ public class Sort {
             if (!swapFlag) {
                 break;
             }
-            print(array, i);
+            prettyPrint(array, i);
         }
         return array;
     }
 
-    public static void print(Integer[] array, int count) {
+    /**
+     * 打印
+     *
+     * @param array
+     * @param count
+     */
+    private static void prettyPrint(Integer[] array, int count) {
         StringBuilder builder = new StringBuilder();
         builder.append("第").append(count + 1).append("次排序:");
         for (Integer i1 : array) {
             builder.append(" ").append(i1).append(" ");
         }
         System.out.println(builder.toString());
+    }
+
+    /**
+     * 创建测试数据
+     *
+     * @return
+     */
+    private static Integer[] createArray(int n) {
+        List<Integer> list = new ArrayList<>();
+        Random random = new Random();
+        for (int i = 0; i < n; i++) {
+            list.add(random.nextInt(100));
+        }
+        StringBuilder builder = new StringBuilder();
+        builder.append("原始数组:");
+        Integer[] integers = list.toArray(new Integer[]{});
+        for (Integer integer : integers) {
+            builder.append(integer)
+                    .append(" ");
+        }
+        System.out.println(builder.toString());
+        return integers;
     }
 
 }
