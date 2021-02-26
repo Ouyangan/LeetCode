@@ -1,6 +1,7 @@
 package com.an;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
@@ -22,6 +23,41 @@ public class Sort {
         quickSort(createArray(10));
     }
 
+
+    public static Integer[] bucketSort(int[] array) {
+        //计算桶的数量
+        int min = 0;
+        int max = 0;
+        for (int i : array) {
+            int val = array[i];
+            if (min > val) {
+                min = val;
+            }
+            if (max < array[i]) {
+                max = val;
+            }
+        }
+        int count = (max - min) / array.length + 1;
+        List<List<Integer>> lists = new ArrayList<>();
+        for (int i = 0; i < count; i++) {
+            lists.add(new ArrayList<>());
+        }
+        //按下标填充桶元素
+        for (int i : array) {
+            int index = (array[i] - min) / array.length;
+            lists.get(index).add(array[i]);
+        }
+        //桶内排序
+        for (List<Integer> list : lists) {
+            Collections.sort(list);
+        }
+        List<Integer> result = new ArrayList<>();
+        //合并
+        lists.forEach(result::addAll);
+        Integer[] toArray = result.toArray(new Integer[result.size()]);
+        return toArray;
+    }
+
     /**
      * 快速排序
      * O(n^log^n)
@@ -41,6 +77,7 @@ public class Sort {
     }
 
     private static int partition(Integer[] array, int left, int right) {
+
         //找基准点
         //排序基准点右边数组
         int pivot = left;
@@ -59,7 +96,6 @@ public class Sort {
         swap(array, pivot, index - 1);
         return index - 1;
     }
-
 
     private static void swap(Integer[] array, int i, int j) {
         int temp = array[i];
@@ -153,7 +189,6 @@ public class Sort {
         }
         return array;
     }
-
 
     /**
      * 插入排序
