@@ -4,9 +4,8 @@ import java.util.Arrays;
 
 public class BinarySearch {
     public static void main(String[] args) {
-        int len = 100;
-        int[] nums = {64, 7, 74, 85, 87, 78};
-        int val = binarySearch(nums, 7, 0, nums.length - 1);
+        int[] nums = ArrayGenerator.createSortArray(10);
+        int val = binarySearch(ArrayGenerator.createSortArray(10), 7, 0, nums.length - 1);
         System.out.println(val);
     }
 
@@ -18,10 +17,12 @@ public class BinarySearch {
         }
         int mid = low + ((high - low) >> 2);
         if (nums[mid] == val) {
-            System.out.println("存在:" + val + " 下标为:" + mid);
-            return mid;
+            if (mid == 0 || nums[mid - 1] != val) {
+                return mid;
+            }
+            return binarySearch(nums, val, low, mid - 1);
         }
-        if (nums[mid] > val) {
+        if (nums[mid] < val) {
             return binarySearch(nums, val, mid + 1, high);
         }
         return binarySearch(nums, val, low, mid - 1);
